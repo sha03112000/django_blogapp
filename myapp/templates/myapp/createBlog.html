@@ -1,0 +1,16 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+<div class="container">
+    <h2>Create New Blog</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            {{ form.errors }}
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+</div>
+{% endblock %}
