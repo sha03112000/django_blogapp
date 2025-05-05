@@ -63,6 +63,9 @@ INSTALLED_APPS = [
 
 LOGIN_URL = '/auth/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # session expiry
 # SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds

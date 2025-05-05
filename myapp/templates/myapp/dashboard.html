@@ -1,103 +1,273 @@
-{% extends 'myapp/base.html' %} {% block content %}
-
-{% if messages %}
-{% for message in messages %}
+{% extends 'myapp/base.html' %} {% block content %} {% if messages %} {% for message in messages %}
 <p class="alert alert-success">{{ message }}</p>
-{% endfor %}
-{% endif %}
-
-
+{% endfor %} {% endif %}
 
 <div class="container">
-    <div class="d-flex justify-content-end">
-        <a href="" id="logout" class="btn btn-danger">Logout</a>
-    </div>
-    <div class="d-flex justify-content-between my-4 border-success p-2 rounded-1" style="background-color: aliceblue">
-        <h4>Welcome Dashboard</h4>
-        <a href="{% url 'createBlog' %}" class="btn btn-info">Create New Blog</a>
-    </div>
-    <div class="card px-2 py-2">
-        <h4 class="my-2 card-header">
-            My Blogs <span class="badge bg-success">{{ posts|length }}</span>
-        </h4>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">title</th>
-                    <th scope="col">description</th>
-                    <th scope="col">Update</th>
-                    <th scope="col">Delete</th>
-                </tr>
-            </thead>
-            <tbody class="table-group-divider" style="cursor: pointer">
-                {% for post in posts %}
-                <tr class="table-dark">
-                    <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ post.title }}</td>
-                    <td>{{ post.body }}</td>
-                    <td>@mdo</td>
-                    <td>2</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center text-danger">You have no post</td>
-                </tr>
-                {% endfor %}
-
-            </tbody>
-        </table>
-
-        <div class="d-flex justify-content-center">
-            <div class="pagination">
-                <span class="step-links">
-                    {% if posts.has_previous %}
-                        <a href="?page=1">&laquo; first</a>
-                        <a href="?page={{ posts.previous_page_number }}">previous</a>
-                    {% endif %}
-            
-                    <span class="current">
-                        Page {{ posts.number }} of {{ posts.paginator.num_pages }}
-                    </span>
-            
-                    {% if posts.has_next %}
-                        <a href="?page={{ posts.next_page_number }}">next</a>
-                        <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
-                    {% endif %}
-                </span>
-            </div>
-        </div>
-    </div>
-
-    <div class="my-4">
-        {% for items in allPost %}
-        <div class="card mb-3">
-            <img src="..." class="card-img-top" alt="..." />
-            <div class="card-body">
-                <h5 class="card-title">{{ items.title }}</h5>
-                <p class="card-text">
-                    {{ items.body }}
-                </p>
-                <p class="card-text">
-                    <small class="text-body-secondary">Last updated 3 mins ago</small>
-                </p>
-            </div>
-        </div>
+  <div class="d-flex justify-content-end">
+    <a href="" id="logout" class="btn btn-danger">Logout</a>
+  </div>
+  <div
+    class="d-flex justify-content-between my-4 border-success p-2 rounded-1"
+    style="background-color: aliceblue"
+  >
+    <h4>Welcome Dashboard</h4>
+    <a href="{% url 'createBlog' %}" class="btn btn-info">Create New Blog</a>
+  </div>
+  <div class="card px-2 py-2">
+    <h4 class="my-2 card-header">
+      My Blogs <span class="badge bg-success">{{ posts|length }}</span>
+    </h4>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">title</th>
+          <th scope="col">description</th>
+          <th scope="col">Image</th>
+          <th scope="col">Update</th>
+          <th scope="col">Delete</th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        {% for post in posts %}
+        <tr class="table-dark">
+          <th scope="row">{{ forloop.counter }}</th>
+          <td>{{ post.title }}</td>
+          <td>{{ post.body }}</td>
+          {% if post.blog_image %}
+          <td>
+            <img
+              src="{{ post.blog_image.url }}"
+              alt=""
+              width="50px"
+              height="50px"
+            />
+          </td>
+          {% else %}
+          <td>No Image</td>
+          {% endif %}
+          <td>
+            <button
+              style="cursor: pointer"
+              data-id="{{ post.id }}"
+              
+              class="btn btn-primary updateBtn"
+            >
+              Update
+            </button>
+          </td>
+          <td>
+            <button class="btn btn-danger deletBtn" data-id="{{ post.id }}">
+              Delete
+            </button>
+          </td>
+        </tr>
         {% empty %}
-        <div class="text-center text-danger">No Post Found</div>
+        <tr>
+          <td colspan="5" class="text-center text-danger">You have no post</td>
+        </tr>
         {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="d-flex justify-content-center">
+      <div class="pagination">
+        <span class="step-links">
+          {% if posts.has_previous %}
+          <a href="?page=1">&laquo; first</a>
+          <a href="?page={{ posts.previous_page_number }}">previous</a>
+          {% endif %}
+
+          <span class="current">
+            Page {{ posts.number }} of {{ posts.paginator.num_pages }}
+          </span>
+
+          {% if posts.has_next %}
+          <a href="?page={{ posts.next_page_number }}">next</a>
+          <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
+          {% endif %}
+        </span>
+      </div>
     </div>
+  </div>
+
+  <div class="my-4">
+    {% for items in allPosts %}
+    <div class="card mb-3">
+      <img src="..." class="card-img-top" alt="..." />
+      <div class="card-body">
+        <h5 class="card-title">{{ items.title }}</h5>
+        <p class="card-text">{{ items.body }}</p>
+        <p class="card-text">
+          <small class="text-body-secondary">Last updated 3 mins ago</small>
+        </p>
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-center text-danger">No Post Found</div>
+    {% endfor %}
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <form id="updateForm" enctype="multipart/form-data">
+        <!-- {% csrf_token %} -->
+        <div class="modal-body">
+          <input type="hidden" name="blogId" id="blogId" />
+
+          <label for="updateTitle" class="form-label">Title</label>
+          <input
+            type="text"
+            id="updateTitle"
+            name="title"
+            class="form-control"
+          />
+
+          <label for="UpdateBody" class="form-label">Description</label>
+          <input type="text" id="UpdateBody" name="body" class="form-control" />
+
+          <div class="d-flex justify-content-start flex-column mt-2">
+            <label for="updateImage" class="form-label">Image</label>
+
+          <img id="previewImage" src="" alt="Preview" class="mt-2 mb-3 img-fluid" style="display: none;" width="100" />
+          </div>
+
+          <input
+            type="file"
+            id="updateImage"
+            name="blog_image"
+            class="form-control"
+          />
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <script>
-    $(document).ready(function () {
-        // logout
-        $("#logout").click(function (e) {
-            e.preventDefault();
-            var userConfirmed = confirm("Are you sure you want to logout?");
-            if (!userConfirmed) return;
-            window.location.href = "{% url 'signOut' %}";
-        });
+  $(document).ready(function () {
+    $.ajaxSetup({
+      beforeSend: function (xhr, settings) {
+        const csrfToken = document
+          .querySelector('meta[name="csrf-token"]')
+          .getAttribute("content");
+        xhr.setRequestHeader("X-CSRFToken", csrfToken);
+      },
     });
+
+    // logout
+    $("#logout").click(function (e) {
+      e.preventDefault();
+      var userConfirmed = confirm("Are you sure you want to logout?");
+      if (!userConfirmed) return;
+      window.location.href = "{% url 'signOut' %}";
+    });
+
+    $(".updateBtn").click(function () {
+      const id = $(this).data("id");
+      const title = $(this).closest("tr").find("td:nth-child(2)").text();
+      const body = $(this).closest("tr").find("td:nth-child(3)").text();
+      const image = $(this)
+        .closest("tr")
+        .find("td:nth-child(4) img")
+        .attr("src");
+
+      $("#blogId").val(id);
+      $("#updateTitle").val(title);
+      $("#UpdateBody").val(body);
+
+      if (image) {
+        $("#previewImage").attr("src", image).show();
+      } else {
+        $("#previewImage").hide();
+      }
+
+      $("#exampleModal").modal("show");
+    });
+
+    $(".deletBtn").click(function (e) {
+      const id = $(this).data("id");
+      alert(id);
+
+      let confirmation = confirm("Are u sure want to delete..?");
+      if (!confirmation) return;
+
+      $.ajax({
+        url: "/delete/" + id,
+        type: "POST",
+
+        success: function (response) {
+          alert(response.message);
+          location.reload();
+        },
+        error: function (xhr, error, status) {
+          alert(xhr.responseJSON);
+        },
+      });
+    });
+
+    $("#updateForm").submit(function (e) {
+      e.preventDefault();
+      var formData = new FormData(this);
+      $.ajax({
+        url: "/update/",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        
+        success: function (response) {
+          alert(response.message);
+          location.reload();
+        },
+        error: function (xhr, error, status) {
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                let errors = xhr.responseJSON.error;
+                let messages = "";
+
+                // Loop through errors if it's an object
+                if (typeof errors === "object") {
+                    for (let field in errors) {
+                        messages += `${field}: ${errors[field].join(', ')}\n`;
+                    }
+                } else {
+                    messages = errors;
+                }
+
+                alert(messages);
+            } else {
+                alert("An unknown error occurred.");
+            }
+        },
+      });
+    });
+  });
 </script>
 {% endblock %}
