@@ -50,7 +50,6 @@
             <button
               style="cursor: pointer"
               data-id="{{ post.id }}"
-              
               class="btn btn-primary updateBtn"
             >
               Update
@@ -91,15 +90,22 @@
     </div>
   </div>
 
+  <style>
+    .styled-image {
+      /* width: 280px; */
+      height: 200px;
+    }
+  </style>
+
   <div class="my-4">
     {% for items in allPosts %}
     <div class="card mb-3">
-      <img src="..." class="card-img-top" alt="..." />
+      <img src="{{ items.blog_image.url }}" class="styled-image" alt="..." />
       <div class="card-body">
         <h5 class="card-title">{{ items.title }}</h5>
         <p class="card-text">{{ items.body }}</p>
         <p class="card-text">
-          <small class="text-body-secondary">Last updated 3 mins ago</small>
+          <small class="text-body-secondary">Last updated {{ items.created_at|timesince }} ago </small>
         </p>
       </div>
     </div>
@@ -146,7 +152,14 @@
           <div class="d-flex justify-content-start flex-column mt-2">
             <label for="updateImage" class="form-label">Image</label>
 
-          <img id="previewImage" src="" alt="Preview" class="mt-2 mb-3 img-fluid" style="display: none;" width="100" />
+            <img
+              id="previewImage"
+              src=""
+              alt="Preview"
+              class="mt-2 mb-3 img-fluid"
+              style="display: none"
+              width="100"
+            />
           </div>
 
           <input
@@ -242,29 +255,29 @@
         data: formData,
         processData: false,
         contentType: false,
-        
+
         success: function (response) {
           alert(response.message);
           location.reload();
         },
         error: function (xhr, error, status) {
-            if (xhr.responseJSON && xhr.responseJSON.error) {
-                let errors = xhr.responseJSON.error;
-                let messages = "";
+          if (xhr.responseJSON && xhr.responseJSON.error) {
+            let errors = xhr.responseJSON.error;
+            let messages = "";
 
-                // Loop through errors if it's an object
-                if (typeof errors === "object") {
-                    for (let field in errors) {
-                        messages += `${field}: ${errors[field].join(', ')}\n`;
-                    }
-                } else {
-                    messages = errors;
-                }
-
-                alert(messages);
+            // Loop through errors if it's an object
+            if (typeof errors === "object") {
+              for (let field in errors) {
+                messages += `${field}: ${errors[field].join(", ")}\n`;
+              }
             } else {
-                alert("An unknown error occurred.");
+              messages = errors;
             }
+
+            alert(messages);
+          } else {
+            alert("An unknown error occurred.");
+          }
         },
       });
     });
