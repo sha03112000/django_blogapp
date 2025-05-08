@@ -34,7 +34,19 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
+    'DEFAULT THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    
+    #custom exception handler
+    'EXCEPTION_HANDLER': 'api.utils.custom_exception_handler', 
+    
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '3/day',
+        'user': '100/day'
+    }
 }
 
 
@@ -60,9 +72,10 @@ INSTALLED_APPS = [
     'authApp',
 ]
 
-
+# for web app retun login page if no user is logged in
 LOGIN_URL = '/auth/'
 
+# for media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -80,8 +93,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'blogapp.middleware.DisableClientSideCachingMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # enable cors headers for api
+    'blogapp.middleware.DisableClientSideCachingMiddleware', # disable client side caching
 ]
 
 ROOT_URLCONF = 'blogapp.urls'

@@ -11,6 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from myapp.models import Post
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+
 # Create your views here.
 
 class PostPagination(PageNumberPagination):
@@ -21,9 +23,11 @@ class PostPagination(PageNumberPagination):
 class CustomeObtainSerializer(TokenObtainPairView):
     permission_classes = [StaticTokenPermission]
     serializer_class = TokenObtainPairSerializer
+    throttle_classes = [AnonRateThrottle]
     
 class CreateUser(APIView):
     permission_classes = [StaticTokenPermission]
+    
     def post(self, request, format=None):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -41,6 +45,8 @@ class BlogListAndCreate(APIView):
     permission_classes = [IsAuthenticated, StaticTokenPermission]
     pagination_class = PostPagination
     parser_classes = (MultiPartParser, FormParser)
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    
     
     def get(self, request, format=None):
         try:
@@ -140,13 +146,4 @@ class UpdateDeleteBlog(APIView):
                 'success': False,
                 'message': str(e),
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-    
-def list_blogs():
-    pass
-
-def detail_blogs():
-    pass
-
-def delete_blog():
-    pass
+            
